@@ -22,12 +22,13 @@
                 <button class="btn btn-primary" :disabled="newItem.length === 0" @click="saveItem">Save Item</button>
             </div>
             <ul>
-                <li v-for="item in reversedItems" :class="{strikeout: item.purchased}" @click="togglePurchased(item)"><span class="padding-right">{{ item.label }}:</span> <span class="padding-right">${{item.price}}</span></li>
+                <li v-for="item in reversedItems" :class="{strikeout: item.purchased}" @click="togglePurchased(item)"><span class="padding-right">{{ item.label.toLocaleUpperCase() }}:</span> <span class="padding-right">${{item.price}}</span></li>
             </ul>
             <p>Total Budget: ${{totalBudget}}</p>
-            <p>Sisa Budget: ${{sisaGaji}}</p>
+            <p>Sisa Budget - {{new Date() | moment}}: ${{sisaGaji}}</p>
         </div>
         <script src="https://unpkg.com/vue"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.js"></script>
         <script>
             var budgetList = new Vue({
                 el: '#budget-list',
@@ -74,13 +75,17 @@
                         this.items.push({
                             label: this.newItem,
                             purchased: false,
-                            price: this.itemPrice
+                            price: this.itemPrice,
+                            date: new Date(),
                         });
                         this.newItem = '';
                         this.itemPrice= '';
                     },
                     showGaji: function(){
                         this.gaji
+                    },
+                    moment: function (date){
+                        return moment(date);
                     },
                     changeState: function(newState) {
                         this.state = newState;
@@ -89,6 +94,11 @@
                     },
                     togglePurchased: function(item) {
                         item.purchased = !item.purchased;
+                    }
+                },
+                filters: {
+                    moment: function (date){
+                        return moment(date).format("MMMM/YY");
                     }
                 }
             })
