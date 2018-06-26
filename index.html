@@ -2,10 +2,96 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Shopping List App</title>
+        <title>Budget List App</title>
         <link rel="stylesheet" href="main.css">
     </head>
     <body>
-        
+        <div id="budget-list">
+            <div class="header">
+                <h1>{{ header.toLocaleUpperCase() }}</h1>
+                <button v-if="state === 'default'" class="btn btn-primary" @click="changeState('edit')">Add Budget</button>
+                <button v-else class="btn btn-cancel" @click="changeState('default')">Stop Adding List</button>
+                <div class="add-item-form">
+                    <input v-model="gaji" type="text" placeholder="Add Gaji" @keyup.enter="showGaji">
+                </div>
+            </div>
+            <p v-if="items.length === 0">Start Your Monthly Budget.</p>
+            <div v-if="state === 'edit'" class="add-item-form">
+                <input v-model="newItem" type="text" placeholder="Add an item" @keyup.enter="saveItem">
+                <input v-model="itemPrice" type="text" placeholder="Add an item price" @keyup.enter="saveItem">
+                <button class="btn btn-primary" :disabled="newItem.length === 0" @click="saveItem">Save Item</button>
+            </div>
+            <ul>
+                <li v-for="item in reversedItems" :class="{strikeout: item.purchased}" @click="togglePurchased(item)"><span class="padding-right">{{ item.label }}:</span> <span class="padding-right">${{item.price}}</span></li>
+            </ul>
+            <p>Total Budget: ${{totalBudget}}</p>
+            <p>Sisa Budget: ${{sisaGaji}}</p>
+        </div>
+        <script src="https://unpkg.com/vue"></script>
+        <script>
+            var budgetList = new Vue({
+                el: '#budget-list',
+                data: {
+                    state: 'default',
+                    header: 'budget list app',
+                    newItem: '',
+                    gaji: '',
+                    items: [
+                        // {
+                        //     label: '10 party hats',
+                        //     purchased: false,
+                        //     highPriority: false,
+                        //     price: 20,
+                        // },
+                        // {
+                        //     label: '2 board games',
+                        //     purchased: false,
+                        //     highPriority: false,
+                        //     price: 20,
+                        // },
+                        // {
+                        //     label: '20 cups',
+                        //     purchased: false,
+                        //     highPriority: false,
+                        //     price: 20,
+                        // },
+                    ]
+                },
+                computed: {
+                    reversedItems() {
+                        return this.items.slice(0).reverse();
+                    },
+                    totalBudget(){
+                        return this.items.reduce((total,item) => Number(total) + Number(item.price) ,0);
+                    },
+                    sisaGaji(){
+                        var budget = this.items.reduce((total,item) => Number(total) + Number(item.price) ,0);
+                        return (this.gaji - budget);
+                    }
+                },
+                methods: {
+                    saveItem: function() {
+                        this.items.push({
+                            label: this.newItem,
+                            purchased: false,
+                            price: this.itemPrice
+                        });
+                        this.newItem = '';
+                        this.itemPrice= '';
+                    },
+                    showGaji: function(){
+                        this.gaji
+                    },
+                    changeState: function(newState) {
+                        this.state = newState;
+                        this.newItem = '';
+                        this.itemPrice= '';
+                    },
+                    togglePurchased: function(item) {
+                        item.purchased = !item.purchased;
+                    }
+                }
+            })
+        </script>
     </body>
 </html>
