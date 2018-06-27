@@ -15,15 +15,15 @@
                     <input v-model="gaji" type="text" placeholder="Add Gaji" @keyup.enter="showGaji">
                 </div>
             </div>
-            <p v-if="items.length === 0">Start Your Monthly Budget.</p>
+            <p v-if="items.length === 0">Start Your Monthly Budget Planning.</p>
             <div v-if="state === 'edit'" class="add-item-form">
                 <input v-model="newItem" type="text" placeholder="Add an item" @keyup.enter="saveItem">
                 <input v-model="itemPrice" type="text" placeholder="Add an item price" @keyup.enter="saveItem">
                 <button class="btn btn-primary" :disabled="newItem.length === 0" @click="saveItem">Save Item</button>
             </div>
             <ul>
-                <li v-for="item in reversedItems" @click="remove()">
-                    <span class="padding-right">{{ item.label.toLocaleUpperCase() }}:</span> <span class="padding-right">${{item.price}}</span>
+                <li v-for="item in reversedItems" >
+                    <span class="padding-right">{{ item.label.toLocaleUpperCase() }}:</span> <span class="padding-right">${{item.price}}</span> <button @click="removeBudget(item)">Remove</button>
                 </li>
             </ul>
             <p>Total Budget: ${{totalBudget}}</p>
@@ -39,23 +39,7 @@
                     header: 'budget list app',
                     newItem: '',
                     gaji: '',
-                    items: [
-                        // {
-                        //     label: '10 party hats',
-                        //     highPriority: false,
-                        //     price: 20,
-                        // },
-                        // {
-                        //     label: '2 board games',
-                        //     highPriority: false,
-                        //     price: 20,
-                        // },
-                        // {
-                        //     label: '20 cups',
-                        //     highPriority: false,
-                        //     price: 20,
-                        // },
-                    ]
+                    items: []
                 },
                 computed: {
                     reversedItems() {
@@ -72,6 +56,7 @@
                 methods: {
                     saveItem: function() {
                         this.items.push({
+                            id: this.items.length,
                             label: this.newItem,
                             price: this.itemPrice,
                             date: new Date(),
@@ -82,7 +67,7 @@
                     showGaji: function(){
                         this.gaji
                     },
-                    remove: function(item){
+                    removeBudget(item){
                         this.items.splice(this.items.indexOf(item), 1);
                     },
                     moment: function (date){
