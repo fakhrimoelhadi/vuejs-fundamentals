@@ -22,7 +22,9 @@
                 <button class="btn btn-primary" :disabled="newItem.length === 0" @click="saveItem">Save Item</button>
             </div>
             <ul>
-                <li v-for="item in reversedItems" :class="{strikeout: item.purchased}" @click="togglePurchased(item)"><span class="padding-right">{{ item.label.toLocaleUpperCase() }}:</span> <span class="padding-right">${{item.price}}</span></li>
+                <li v-for="item in reversedItems" @click="remove()">
+                    <span class="padding-right">{{ item.label.toLocaleUpperCase() }}:</span> <span class="padding-right">${{item.price}}</span>
+                </li>
             </ul>
             <p>Total Budget: ${{totalBudget}}</p>
             <p>Sisa Budget - {{new Date() | moment}}: ${{sisaGaji}}</p>
@@ -40,19 +42,16 @@
                     items: [
                         // {
                         //     label: '10 party hats',
-                        //     purchased: false,
                         //     highPriority: false,
                         //     price: 20,
                         // },
                         // {
                         //     label: '2 board games',
-                        //     purchased: false,
                         //     highPriority: false,
                         //     price: 20,
                         // },
                         // {
                         //     label: '20 cups',
-                        //     purchased: false,
                         //     highPriority: false,
                         //     price: 20,
                         // },
@@ -74,7 +73,6 @@
                     saveItem: function() {
                         this.items.push({
                             label: this.newItem,
-                            purchased: false,
                             price: this.itemPrice,
                             date: new Date(),
                         });
@@ -84,6 +82,9 @@
                     showGaji: function(){
                         this.gaji
                     },
+                    remove: function(item){
+                        this.items.splice(this.items.indexOf(item), 1);
+                    },
                     moment: function (date){
                         return moment(date);
                     },
@@ -91,9 +92,6 @@
                         this.state = newState;
                         this.newItem = '';
                         this.itemPrice= '';
-                    },
-                    togglePurchased: function(item) {
-                        item.purchased = !item.purchased;
                     }
                 },
                 filters: {
