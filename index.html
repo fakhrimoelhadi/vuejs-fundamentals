@@ -22,8 +22,8 @@
                 <button class="btn btn-primary" :disabled="newItem.length === 0" @click="saveItem">Save Item</button>
             </div>
             <ul>
-                <li v-for="item in reversedItems" >
-                    <span class="padding-right">{{ item.label.toLocaleUpperCase() }}:</span> <span class="padding-right">${{item.price}}</span> <button @click="removeBudget(item)">Remove</button>
+                <li v-for="item in reversedItems" @click="removeBudget(item)" >
+                    <span class="padding-right">{{ item.label.toLocaleUpperCase() }}:</span> <span class="padding-right">${{item.price}}</span>
                 </li>
             </ul>
             <p>Total Budget: ${{totalBudget}}</p>
@@ -32,6 +32,7 @@
         <script src="https://unpkg.com/vue"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.js"></script>
         <script>
+            const STORAGE_KEY = 'budget-storage';
             var budgetList = new Vue({
                 el: '#budget-list',
                 data: {
@@ -53,6 +54,9 @@
                         return (this.gaji - budget);
                     }
                 },
+                created(){
+                    this.items = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); // retrieve the data from localstorage when page refresh
+                },
                 methods: {
                     saveItem: function() {
                         this.items.push({
@@ -63,12 +67,14 @@
                         });
                         this.newItem = '';
                         this.itemPrice= '';
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(this.items));
                     },
                     showGaji: function(){
                         this.gaji
                     },
                     removeBudget(item){
                         this.items.splice(this.items.indexOf(item), 1);
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(this.items));
                     },
                     moment: function (date){
                         return moment(date);
